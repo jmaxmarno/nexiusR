@@ -130,7 +130,7 @@ for (i in 1:nrow(sites.df)){
   rootaddr<- splitaddr[2:length(splitaddr)]
   rootaddr<- paste(rootaddr, collapse = " ")
   print(rootaddr)
-  if (grepl("-",splitaddr[1]) & is.null(asite$e911address)){
+  if (grepl("-",splitaddr[1]) & is.na(asite$e911address)==TRUE){
     addrange<- unlist(strsplit(splitaddr[1], "-"))
     print(addrange)
     rmin<-  as.numeric(addrange[1])
