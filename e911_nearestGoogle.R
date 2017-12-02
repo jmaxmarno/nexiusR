@@ -18,7 +18,7 @@ projws= "C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR"
 setwd(projws)
 gclientid<-"386710922427-jrd05o1hhvmh6f7l8rmb801esmbpejrs.apps.googleusercontent.com"
 gsecret<- "YVFiEA6_iqZRX7glI4F5C1d7"
-#register_google(key = 'AIzaSyA8IkfrengHmeCnEumzbpxQjDDw2XB4wTE')
+register_google(key = 'AIzaSyA8IkfrengHmeCnEumzbpxQjDDw2XB4wTE')
 
 sites.w.revgeo<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR/sites.df.wRevGeo.csv", stringsAsFactors = FALSE)
 sites.df<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/LizPeterson_07_27/e911datacopy.csv", stringsAsFactors = FALSE)
@@ -31,6 +31,21 @@ for(i in 1:nrow(sites.df)){
   #Sys.sleep(.5)
   sites.df$RevGeoAddrLat[i]<- AddrCoords$lat
   sites.df$RevGeoAddrLon[i]<- AddrCoords$lon
+  #MEASURE DIST BETWEEEN REAL SITE COORDINATES, AND REVGEO>GEOCODED ADDRESS COORDINATES
+  coords<- matrix(c(sites.df$longitude[i], sites.df$latitude[i]), nrow = 1)
+  addcoords<- matrix(c(sites.df$RevGeoAddrLon[i], sites.df$RevGeoAddrLat[i]), nrow = 1)
+  ddist<- spDistsN1(addcoords, coords, longlat = TRUE)
+  sites.df$DIST2RevGeo[i]<- 1000*ddist
+  print(toString(i))
+}
+for(i in 1:nrow(sites.df)){
+  # sites.df$RevGeoAddr[i]<- stri_trans_general(revgeocode(location = c(sites.df$longitude[i], sites.df$latitude[i]), override_limit = TRUE, nameType='long'), "Latin-ASCII")
+  # #Sys.sleep(.5)
+  # AddrCoords<- geocode(location = toString(sites.df$RevGeoAddr[i]), override_limit = TRUE, nameType = 'long')
+  # #Sys.sleep(.5)
+  # sites.df$RevGeoAddrLat[i]<- AddrCoords$lat
+  # sites.df$RevGeoAddrLon[i]<- AddrCoords$lon
+  
   # MEASURE DIST BETWEEEN REAL SITE COORDINATES, AND REVGEO>GEOCODED ADDRESS COORDINATES
   coords<- matrix(c(sites.df$longitude[i], sites.df$latitude[i]), nrow = 1)
   addcoords<- matrix(c(sites.df$RevGeoAddrLon[i], sites.df$RevGeoAddrLat[i]), nrow = 1)
@@ -38,7 +53,6 @@ for(i in 1:nrow(sites.df)){
   sites.df$DIST2RevGeo[i]<- 1000*ddist
   print(toString(i))
 }
-
 
 
 
@@ -79,7 +93,7 @@ for (i in 1:nrow(sites.df)){
     mindistaddress<- range.df[which(range.df$distances==min(range.df$distances)),]$addressess
     mindistdist<- range.df[which(range.df$distances==min(range.df$distances)),]$distances
     sites.df$e911address[i]<- toString(mindistaddress)
-    sites.df$e911dist[i]<- mindistdist
+    sites.df$e911dist[i]<- mindistdist*1000
   } else {
     sites.df$e911address[i]<- NA
     sites.df$e911dist[i]<- NA
@@ -92,35 +106,8 @@ for (i in 1:nrow(sites.df)){
 "5070 Village Center Dr, Yorba Linda, CA 92886, USA"
 
 
-# for(i in 1:nrow(OaklandPoints)){
-#   coords<- matrix(c(OaklandPoints$longitude[i], OaklandPoints$latitude[i]), nrow = 1)
-#   acoords<- matrix(c(OaklandPoints$AddrLon[i], OaklandPoints$AddrLat[i]), nrow = 1)
-#   ddist<- spDistsN1(acoords, coords, longlat = TRUE)
-#   OaklandPoints$DIST2RevGeo[i]<- 1000*ddist
-# }
-
-# if (grepl("-",splitaddr[1])){
-#   Sys.sleep(1)
-#   addrange<- unlist(strsplit(splitaddr[1], "-"))
-#   print(addrange)
-#   rmin<-  as.numeric(addrange[1])
-#   rmax<- as.numeric(addrange[2])
-#   rdiff<- rmax-rmin
-#   rrange<- c(rmin:rmax)
-#   radds<- sapply(rrange, function(x) stri_trans_general(paste(toString(x), rootaddr), "Latin-ASCII"))
-#   rrevgeo<- lapply(radds, function(x) unlist(geocode(location = x, override_limit = TRUE)))
-#   # rcoords<- lapply(rrevgeo, function(x) c(unlist(x)[1], unlist(x)[2]))
-#   ddists<- unlist(lapply(rrevgeo, function(x) spDistsN1(matrix(c(unlist(x)[1], unlist(x)[2]), nrow=1), coords, longlat = TRUE )))
-#   # ddists<- lapply(rcoords, function(x) spDistsN1(matrix(c(x[1], x[2]), nrow=1), coords, longlat = TRUE ))
-#   range.df<- data.frame(addressess=radds, distances = ddists)
-#   mindistaddress<- range.df[which(range.df$distances==min(range.df$distances)),]$addressess
-#   mindistdist<- range.df[which(range.df$distances==min(range.df$distances)),]$distances
-#   sites.df$e911address[i]<- toString(mindistaddress)
-#   sites.df$e911dist[i]<- mindistdist
-# }
-
-
 ## Loop through again to find ones that the first missed for some fucking reason 
+sites.df<- read.csv('workinprogress.csv', stringsAsFactors = FALSE)
 for (i in 1:nrow(sites.df)){
   asite<- sites.df[i,]
   aaddr<- asite$RevGeoAddr
@@ -139,7 +126,7 @@ for (i in 1:nrow(sites.df)){
     rrange<- c(rmin:rmax)
     radds<- sapply(rrange, function(x) stri_trans_general(paste(toString(x), rootaddr), "Latin-ASCII"))
     multi.fun<- function(x){
-      Sys.sleep(.3)
+      #Sys.sleep(.3)
       unlist(geocode(location = x, override_limit = TRUE))
     }
     rrevgeo<- lapply(radds, multi.fun)

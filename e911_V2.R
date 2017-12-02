@@ -24,6 +24,7 @@ sites.w.revgeo<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR/site
 sites.df<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/LizPeterson_07_27/e911datacopy.csv", stringsAsFactors = FALSE)
 #sites.df<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR/workinprogress.csv", stringsAsFactors = FALSE)
 #sites.df<- sites.df[10:nrow(sites.df)] #DON'T FORGET COMMA!!!
+sites.df<- sites.df[which(sites.df$fulcrum_id=="a110b163-2519-4060-b021-474edcffd735" | sites.df$fulcrum_id=="ac6dd6af-6a27-40b4-95f1-cb457f99a6fe" ),]
 for(i in 1:nrow(sites.df)){
   geo1<- revgeocode(location = c(sites.df$longitude[i], sites.df$latitude[i]), override_limit = TRUE, nameType='long', output = 'all')
   if (geo1$status=="OK"){
@@ -138,7 +139,7 @@ for (i in 1:nrow(sites.df)){
     mindistaddress<- range.df[which(range.df$distances==min(range.df$distances)),]$addressess
     mindistdist<- range.df[which(range.df$distances==min(range.df$distances)),]$distances
     sites.df$e911address[i]<- toString(mindistaddress)
-    sites.df$e911dist[i]<- mindistdist
+    sites.df$e911dist[i]<- mindistdist*1000
   } else {
     sites.df$e911address[i]<- NA
     sites.df$e911dist[i]<- NA
@@ -150,10 +151,10 @@ for (i in 1:nrow(sites.df)){
 ########################################################################################
 # LOOP TO RETURN SINGLE ADDRESS INSTEAD OF RANGE
 # try with already created revgeo csv
-write.csv(sites.df, "SITES.DF_2.csv", row.names = FALSE)
+#write.csv(sites.df, "SITES.DF_6.csv", row.names = FALSE)
 
 
-sites.df<- read.csv("SITES.DF_3.csv", stringsAsFactors = FALSE)
+sites.df<- read.csv("SITES.DF_6.csv", stringsAsFactors = FALSE)
 for (i in 1:nrow(sites.df)){
   asite<- sites.df[i,]
   aaddr<- asite$RevGeoAddr
@@ -162,7 +163,7 @@ for (i in 1:nrow(sites.df)){
   splitaddr<- unlist(strsplit(aaddr, ' '))
   rootaddr<- splitaddr[2:length(splitaddr)]
   rootaddr<- paste(rootaddr, collapse = " ")
-  print(rootaddr)
+  #print(rootaddr)
   if (grepl("-",splitaddr[1]) & is.na(asite$e911address)){
     addrange<- unlist(strsplit(splitaddr[1], "-"))
     print(addrange)
@@ -171,6 +172,7 @@ for (i in 1:nrow(sites.df)){
     rdiff<- rmax-rmin
     rrange<- c(rmin:rmax)
     if (rdiff<2000){
+      print(asite)
       radds<- sapply(rrange, function(x) stri_trans_general(paste(toString(x), rootaddr), "Latin-ASCII"))
       multi.fun<- function(x){
         # NOT SURE IF SLEEP/DELAY IS REALLY NECESSARY...
