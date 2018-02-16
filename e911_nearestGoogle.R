@@ -16,9 +16,9 @@ require(stringi)
 #devtools::install_github("dkahle/ggmap")
 projws= "C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR"
 setwd(projws)
-gclientid<-"386710922427-jrd05o1hhvmh6f7l8rmb801esmbpejrs.apps.googleusercontent.com"
-gsecret<- "YVFiEA6_iqZRX7glI4F5C1d7"
-register_google(key = 'AIzaSyA8IkfrengHmeCnEumzbpxQjDDw2XB4wTE')
+gclientid<-"REMOVED"
+gsecret<- "REMOVED"
+register_google(key = 'REMOVED')
 
 sites.w.revgeo<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR/sites.df.wRevGeo.csv", stringsAsFactors = FALSE)
 sites.df<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/LizPeterson_07_27/e911datacopy.csv", stringsAsFactors = FALSE)
