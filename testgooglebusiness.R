@@ -11,10 +11,10 @@ require(dplyr)
 projws= "C:/Users/jmaxm/Documents/Projects/Nexius/nexiusR"
 setwd(projws)
 
-testadd<- "45 Ridge Road Centennial, WY 82055"
+testadd<- ""
 
-gclientid<-"608614762067-dvr27s8vn6lb18855kmhta9qmtbqbth3.apps.googleusercontent.com"
-gsecret<- "j8V9zbtyfCUkxK-YW8Qv8vGn"
+gclientid<-""
+gsecret<- ""
 
 sites.df<- read.csv("C:/Users/jmaxm/Documents/Projects/Nexius/LizPeterson_07_27/e911datacopy.csv", stringsAsFactors = FALSE)
 sites.df<- sites.df[6,] #DON'T FORGET COMMA!!!
